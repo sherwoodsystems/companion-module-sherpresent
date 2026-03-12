@@ -1,17 +1,17 @@
 {
 	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
-	"id": "your-module-name",
-	"name": "your-module-name",
-	"shortname": "module-shortname",
-	"description": "A short one line description of your module",
-	"version": "0.0.0",
+	"id": "sherwoodsystems-sherpresent",
+	"name": "SherPresent",
+	"shortname": "sherpresent",
+	"description": "Network based multi-platform presentation remote to integrate with the Sherwood Systems clicker adapter.",
+	"version": "0.1.0",
 	"license": "MIT",
-	"repository": "git+https://github.com/bitfocus/companion-module-your-module-name.git",
-	"bugs": "https://github.com/bitfocus/companion-module-your-module-name/issues",
+	"repository": "git+https://github.com/sherwoodsystems/companion-module-sherpresent.git",
+	"bugs": "https://github.com/sherwoodsystems/companion-module-sherpresent/issues",
 	"maintainers": [
 		{
-			"name": "Your name",
-			"email": "Your email"
+			"name": "Cameron Slipp",
+			"email": "cameron@sherwoodsystems.com"
 		}
 	],
 	"runtime": {
@@ -21,7 +21,7 @@
 		"entrypoint": "../dist/main.js"
 	},
 	"legacyIds": [],
-	"manufacturer": "Your company",
-	"products": ["Your product"],
-	"keywords": []
+	"manufacturer": "Sherwood Systems",
+	"products": ["SherStage", "SherPresent", "SlideMerge"],
+	"keywords": ["PowerPoint", "Keynote", "Canva", "Presentation", "Remote"]
 }

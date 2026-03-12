@@ -1,4 +1,6 @@
-# companion-module-[replace with module name]
+# companion-module-sherpresent
+
+Network based multi-platform presentation remote to integrate with the Sherwood Systems clicker adapter.
 
 See [HELP.md](./companion/HELP.md) and [LICENSE](./LICENSE)
 
