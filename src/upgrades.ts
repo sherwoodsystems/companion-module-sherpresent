@@ -1,16 +1,38 @@
-import type { CompanionStaticUpgradeScript } from '@companion-module/base'
+import type {
+	CompanionStaticUpgradeScript,
+	CompanionUpgradeContext,
+	CompanionStaticUpgradeProps,
+	CompanionStaticUpgradeResult,
+} from '@companion-module/base'
 import type { ModuleConfig } from './config.js'
 
 export const UpgradeScripts: CompanionStaticUpgradeScript<ModuleConfig>[] = [
-	/*
-	 * Place your upgrade scripts here
-	 * Remember that once it has been added it cannot be removed!
-	 */
-	// function (context, props) {
-	// 	return {
-	// 		updatedConfig: null,
-	// 		updatedActions: [],
-	// 		updatedFeedbacks: [],
-	// 	}
-	// },
+	function migrateToV1(
+		_context: CompanionUpgradeContext<ModuleConfig>,
+		props: CompanionStaticUpgradeProps<ModuleConfig>,
+	): CompanionStaticUpgradeResult<ModuleConfig> {
+		const config = props.config as unknown as Record<string, unknown> | null
+		if (!config) {
+			return { updatedConfig: null, updatedActions: [], updatedFeedbacks: [] }
+		}
+
+		let configChanged = false
+
+		// Migrate old single-port config to new multi-port config
+		if ('port' in config && !('commandPort' in config)) {
+			config.commandPort = 9000
+			config.feedbackPort = 9001
+			config.mode = 'direct'
+			config.broadcastPort = 9002
+			config.channel = 'main'
+			delete config.port
+			configChanged = true
+		}
+
+		return {
+			updatedConfig: configChanged ? (config as unknown as ModuleConfig) : null,
+			updatedActions: [],
+			updatedFeedbacks: [],
+		}
+	},
 ]

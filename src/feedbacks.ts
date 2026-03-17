@@ -3,30 +3,49 @@ import type { ModuleInstance } from './main.js'
 
 export function UpdateFeedbacks(self: ModuleInstance): void {
 	self.setFeedbackDefinitions({
-		ChannelState: {
-			name: 'Example Feedback',
+		presenting: {
+			name: 'Is Presenting',
 			type: 'boolean',
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
+				bgcolor: combineRgb(0, 204, 0),
+				color: combineRgb(255, 255, 255),
+			},
+			options: [],
+			callback: () => {
+				return self.isPresenting
+			},
+		},
+		slide_match: {
+			name: 'Slide Number Match',
+			type: 'boolean',
+			defaultStyle: {
+				bgcolor: combineRgb(255, 255, 0),
 				color: combineRgb(0, 0, 0),
 			},
 			options: [
 				{
-					id: 'num',
+					id: 'slide',
 					type: 'number',
-					label: 'Test',
-					default: 5,
-					min: 0,
-					max: 10,
+					label: 'Slide Number',
+					default: 1,
+					min: 1,
+					max: 999,
 				},
 			],
 			callback: (feedback) => {
-				console.log('Hello world!', feedback.options.num)
-				if (Number(feedback.options.num) > 5) {
-					return true
-				} else {
-					return false
-				}
+				return self.currentSlide === Number(feedback.options.slide)
+			},
+		},
+		is_open: {
+			name: 'Presentation Open',
+			type: 'boolean',
+			defaultStyle: {
+				bgcolor: combineRgb(0, 102, 204),
+				color: combineRgb(255, 255, 255),
+			},
+			options: [],
+			callback: () => {
+				return self.isOpen
 			},
 		},
 	})

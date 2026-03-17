@@ -5,9 +5,20 @@ import { UpgradeScripts } from './upgrades.js'
 import { UpdateActions } from './actions.js'
 import { UpdateFeedbacks } from './feedbacks.js'
 import { UpdatePresets } from './presets.js'
+import { OscTransport } from './osc.js'
+import type osc from 'osc'
 
 export class ModuleInstance extends InstanceBase<ModuleConfig> {
-	config!: ModuleConfig // Setup in init()
+	config!: ModuleConfig
+
+	transport: OscTransport | null = null
+
+	// State
+	currentSlide = 0
+	totalSlides = 0
+	isPresenting = false
+	isOpen = false
+	zoomLevel = 0
 
 	constructor(internal: unknown) {
 		super(internal)
@@ -16,23 +27,114 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 	async init(config: ModuleConfig): Promise<void> {
 		this.config = config
 
-		this.updateStatus(InstanceStatus.Ok)
+		this.updateActions()
+		this.updateFeedbacks()
+		this.updatePresets()
+		this.updateVariableDefinitions()
 
-		this.updateActions() // export actions
-		this.updateFeedbacks() // export feedbacks
-		this.updatePresets() // export Presets
-		this.updateVariableDefinitions() // export variable definitions
+		this.initTransport()
 	}
-	// When module gets deleted
+
 	async destroy(): Promise<void> {
-		this.log('debug', 'destroy')
+		this.transport?.disconnect()
+		this.transport = null
 	}
 
 	async configUpdated(config: ModuleConfig): Promise<void> {
 		this.config = config
+		this.transport?.disconnect()
+		this.transport = null
+		this.initTransport()
 	}
 
-	// Return config fields for web config
+	private initTransport(): void {
+		this.transport = new OscTransport(this.config, (address, args) => {
+			this.handleFeedback(address, args)
+		})
+
+		try {
+			this.transport.connect()
+			this.updateStatus(InstanceStatus.Ok)
+			// Request initial state
+			this.send('status')
+		} catch (e) {
+			this.updateStatus(InstanceStatus.ConnectionFailure, String(e))
+		}
+	}
+
+	handleFeedback(address: string, args: osc.OscArgument[]): void {
+		const getInt = (index: number): number => {
+			const arg = args[index]
+			if (arg && arg.type === 'i') return arg.value as number
+			return 0
+		}
+
+		let changed = false
+
+		if (address === '/clicker/state/presenting') {
+			const val = getInt(0) !== 0
+			if (this.isPresenting !== val) {
+				this.isPresenting = val
+				changed = true
+			}
+		} else if (address === '/clicker/state/open') {
+			const val = getInt(0) !== 0
+			if (this.isOpen !== val) {
+				this.isOpen = val
+				changed = true
+			}
+		} else if (address === '/clicker/slide/current') {
+			const val = getInt(0)
+			if (this.currentSlide !== val) {
+				this.currentSlide = val
+				changed = true
+			}
+		} else if (address === '/clicker/slide/total') {
+			const val = getInt(0)
+			if (this.totalSlides !== val) {
+				this.totalSlides = val
+				changed = true
+			}
+		} else if (address === '/clicker/zoom/level' || address === '/clicker/state/zoom') {
+			const val = getInt(0)
+			if (this.zoomLevel !== val) {
+				this.zoomLevel = val
+				changed = true
+			}
+		} else if (address.endsWith('/state/slide')) {
+			// Broadcast combined format: current, total
+			const current = getInt(0)
+			const total = getInt(1)
+			if (this.currentSlide !== current || this.totalSlides !== total) {
+				this.currentSlide = current
+				this.totalSlides = total
+				changed = true
+			}
+		}
+
+		if (changed) {
+			this.setVariableValues({
+				current_slide: this.currentSlide,
+				total_slides: this.totalSlides,
+				is_presenting: this.isPresenting ? 'true' : 'false',
+				is_open: this.isOpen ? 'true' : 'false',
+				zoom_level: this.zoomLevel,
+			})
+			this.checkFeedbacks('presenting', 'slide_match', 'is_open')
+		}
+	}
+
+	buildAddress(command: string): string {
+		if (this.config.mode === 'broadcast') {
+			return `/clicker/${this.config.channel}/${command}`
+		}
+		return `/clicker/${command}`
+	}
+
+	send(command: string, args: osc.OscArgument[] = []): void {
+		this.transport?.send(this.buildAddress(command), args)
+	}
+
 	getConfigFields(): SomeCompanionConfigField[] {
 		return GetConfigFields()
 	}
