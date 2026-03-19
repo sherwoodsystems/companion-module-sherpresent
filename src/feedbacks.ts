@@ -36,6 +36,18 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 				return self.currentSlide === Number(feedback.options.slide)
 			},
 		},
+		has_builds: {
+			name: 'Has Builds',
+			type: 'boolean',
+			defaultStyle: {
+				bgcolor: combineRgb(255, 153, 0),
+				color: combineRgb(255, 255, 255),
+			},
+			options: [],
+			callback: () => {
+				return self.totalBuilds > 0
+			},
+		},
 		is_open: {
 			name: 'Presentation Open',
 			type: 'boolean',

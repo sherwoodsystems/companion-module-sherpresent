@@ -19,6 +19,8 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 	isPresenting = false
 	isOpen = false
 	zoomLevel = 0
+	currentBuild = 0
+	totalBuilds = 0
 
 	constructor(internal: unknown) {
 		super(internal)
@@ -95,6 +97,18 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 				this.totalSlides = val
 				changed = true
 			}
+		} else if (address === '/clicker/slide/build') {
+			const val = getInt(0)
+			if (this.currentBuild !== val) {
+				this.currentBuild = val
+				changed = true
+			}
+		} else if (address === '/clicker/slide/builds') {
+			const val = getInt(0)
+			if (this.totalBuilds !== val) {
+				this.totalBuilds = val
+				changed = true
+			}
 		} else if (address === '/clicker/zoom/level' || address === '/clicker/state/zoom') {
 			const val = getInt(0)
 			if (this.zoomLevel !== val) {
@@ -119,8 +133,10 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 				is_presenting: this.isPresenting ? 'true' : 'false',
 				is_open: this.isOpen ? 'true' : 'false',
 				zoom_level: this.zoomLevel,
+				current_build: this.currentBuild,
+				total_builds: this.totalBuilds,
 			})
-			this.checkFeedbacks('presenting', 'slide_match', 'is_open')
+			this.checkFeedbacks('presenting', 'slide_match', 'is_open', 'has_builds')
 		}
 	}
 

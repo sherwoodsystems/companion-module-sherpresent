@@ -7,5 +7,7 @@ export function UpdateVariableDefinitions(self: ModuleInstance): void {
 		{ variableId: 'is_presenting', name: 'Is Presenting' },
 		{ variableId: 'is_open', name: 'Presentation Open' },
 		{ variableId: 'zoom_level', name: 'Zoom Level' },
+		{ variableId: 'current_build', name: 'Current Build Step' },
+		{ variableId: 'total_builds', name: 'Total Build Steps' },
 	])
 }

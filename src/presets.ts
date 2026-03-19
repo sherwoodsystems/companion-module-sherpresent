@@ -8,6 +8,7 @@ const black = combineRgb(0, 0, 0)
 const greenActive = combineRgb(0, 204, 0)
 const blueActive = combineRgb(0, 102, 204)
 const yellowActive = combineRgb(255, 255, 0)
+const orangeActive = combineRgb(255, 153, 0)
 
 // Base button colors (darker, used as default bg)
 const darkGreen = combineRgb(0, 120, 0)
@@ -42,6 +43,11 @@ export function UpdatePresets(self: ModuleInstance): void {
 				options: {},
 				style: { bgcolor: greenActive },
 			},
+			{
+				feedbackId: 'has_builds',
+				options: {},
+				style: { bgcolor: orangeActive },
+			},
 		],
 	}
 
@@ -67,6 +73,11 @@ export function UpdatePresets(self: ModuleInstance): void {
 				feedbackId: 'presenting',
 				options: {},
 				style: { bgcolor: greenActive },
+			},
+			{
+				feedbackId: 'has_builds',
+				options: {},
+				style: { bgcolor: orangeActive },
 			},
 		],
 	}
