@@ -25,7 +25,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 		category: 'Navigation',
 		name: 'Next Slide',
 		style: {
-			text: 'NEXT\\n$(sherpresent:current_slide)/$(sherpresent:total_slides)',
+			text: 'NEXT',
 			size: 'auto',
 			color: white,
 			bgcolor: darkGreen,
@@ -39,11 +39,6 @@ export function UpdatePresets(self: ModuleInstance): void {
 		],
 		feedbacks: [
 			{
-				feedbackId: 'presenting',
-				options: {},
-				style: { bgcolor: greenActive },
-			},
-			{
 				feedbackId: 'has_builds',
 				options: {},
 				style: { bgcolor: orangeActive },
@@ -56,7 +51,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 		category: 'Navigation',
 		name: 'Previous Slide',
 		style: {
-			text: 'PREV\\n$(sherpresent:current_slide)/$(sherpresent:total_slides)',
+			text: 'PREV',
 			size: 'auto',
 			color: white,
 			bgcolor: darkRed,
@@ -69,11 +64,6 @@ export function UpdatePresets(self: ModuleInstance): void {
 			},
 		],
 		feedbacks: [
-			{
-				feedbackId: 'presenting',
-				options: {},
-				style: { bgcolor: greenActive },
-			},
 			{
 				feedbackId: 'has_builds',
 				options: {},
