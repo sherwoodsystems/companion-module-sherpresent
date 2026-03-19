@@ -61,5 +61,19 @@ export function UpdateActions(self: ModuleInstance): void {
 				self.send('zoomOut')
 			},
 		},
+		scroll_up: {
+			name: 'Scroll Up',
+			options: [],
+			callback: async () => {
+				self.send('scrollUp')
+			},
+		},
+		scroll_down: {
+			name: 'Scroll Down',
+			options: [],
+			callback: async () => {
+				self.send('scrollDown')
+			},
+		},
 	})
 }

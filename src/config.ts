@@ -31,7 +31,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			id: 'mode',
 			label: 'Mode',
 			width: 4,
-			default: 'direct',
+			default: 'broadcast',
 			choices: [
 				{ id: 'direct', label: 'Direct' },
 				{ id: 'broadcast', label: 'Broadcast' },
