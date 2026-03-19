@@ -1,6 +1,6 @@
 {
 	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
-	"id": "companion-module-sherpresent",
+	"id": "sherpresent",
 	"name": "SherPresent",
 	"shortname": "sherpresent",
 	"description": "Network based multi-platform presentation remote to integrate with the Sherwood Systems clicker adapter.",
@@ -21,10 +21,13 @@
 		"entrypoint": "../dist/main.js"
 	},
 	"bonjourQueries": {
-		"bonjourDevice": {
-			"type": "_sher-present",
-			"protocol": "udp"
-		}
+		"bonjourDevice": [
+			{
+				"type": "sher-present",
+				"protocol": "udp",
+				"txt": {}
+			}
+		]
 	},
 	"legacyIds": [],
 	"manufacturer": "Sherwood Systems",

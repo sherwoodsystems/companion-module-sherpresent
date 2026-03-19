@@ -51,9 +51,10 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 
 	private getConnectionInfo(): OscConnectionInfo {
 		if (this.config.bonjourDevice) {
+			const [host, rawPort] = this.config.bonjourDevice.split(':')
 			return {
-				host: this.config.bonjourDevice.host,
-				commandPort: this.config.bonjourDevice.port,
+				host,
+				commandPort: Number(rawPort) || this.config.commandPort,
 				feedbackPort: this.config.feedbackPort,
 			}
 		}

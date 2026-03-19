@@ -1,7 +1,7 @@
 import { Regex, type SomeCompanionConfigField } from '@companion-module/base'
 
 export interface ModuleConfig {
-	bonjourDevice: { host: string; port: number; txt: Record<string, string> } | null
+	bonjourDevice?: string
 	host: string
 	commandPort: number
 	feedbackPort: number
