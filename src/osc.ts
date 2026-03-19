@@ -1,17 +1,22 @@
 import dgram from 'dgram'
 import osc from 'osc'
-import type { ModuleConfig } from './config.js'
+
+export interface OscConnectionInfo {
+	host: string
+	commandPort: number
+	feedbackPort: number
+}
 
 export type FeedbackCallback = (address: string, args: osc.OscArgument[]) => void
 
 export class OscTransport {
 	private sendSocket: dgram.Socket | null = null
 	private recvSocket: dgram.Socket | null = null
-	private config: ModuleConfig
+	private connection: OscConnectionInfo
 	private onFeedback: FeedbackCallback
 
-	constructor(config: ModuleConfig, onFeedback: FeedbackCallback) {
-		this.config = config
+	constructor(connection: OscConnectionInfo, onFeedback: FeedbackCallback) {
+		this.connection = connection
 		this.onFeedback = onFeedback
 	}
 
@@ -19,7 +24,6 @@ export class OscTransport {
 		// Send socket
 		this.sendSocket = dgram.createSocket({ type: 'udp4', reuseAddr: true })
 		this.sendSocket.on('error', (err) => {
-			// Errors are non-fatal for the send socket
 			console.error('OSC send socket error:', err.message)
 		})
 
@@ -30,14 +34,14 @@ export class OscTransport {
 			try {
 				const msg = osc.readMessage(data, { metadata: true })
 				if (msg.address) {
-					this.handleIncoming(msg)
+					this.onFeedback(msg.address, msg.args ?? [])
 				}
 			} catch {
-				// Try reading as packet (bundles)
 				try {
 					const packet = osc.readPacket(data, { metadata: true })
 					if ('address' in packet) {
-						this.handleIncoming(packet)
+						const msg = packet
+						this.onFeedback(msg.address, msg.args ?? [])
 					}
 				} catch {
 					// Malformed packet, ignore
@@ -49,35 +53,7 @@ export class OscTransport {
 			console.error('OSC receive socket error:', err.message)
 		})
 
-		if (this.config.mode === 'direct') {
-			// Listen on feedbackPort for incoming feedback
-			this.recvSocket.bind(this.config.feedbackPort, '0.0.0.0')
-		} else {
-			// Broadcast mode: listen on broadcastPort
-			this.recvSocket.bind(this.config.broadcastPort, '0.0.0.0', () => {
-				this.recvSocket?.setBroadcast(true)
-			})
-			this.sendSocket.bind(undefined, undefined, () => {
-				this.sendSocket?.setBroadcast(true)
-			})
-		}
-	}
-
-	private handleIncoming(msg: osc.OscMessage): void {
-		const args = msg.args ?? []
-
-		if (this.config.mode === 'broadcast') {
-			// Filter by channel prefix
-			const prefix = `/clicker/${this.config.channel}/`
-			if (!msg.address.startsWith(prefix)) {
-				return
-			}
-			// Rewrite address to direct format for uniform handling
-			const suffix = msg.address.slice(prefix.length)
-			this.onFeedback(`/clicker/${suffix}`, args)
-		} else {
-			this.onFeedback(msg.address, args)
-		}
+		this.recvSocket.bind(this.connection.feedbackPort, '0.0.0.0')
 	}
 
 	send(address: string, args: osc.OscArgument[] = []): void {
@@ -85,12 +61,7 @@ export class OscTransport {
 
 		const msg = osc.writeMessage({ address, args })
 		const buf = Buffer.from(msg)
-
-		if (this.config.mode === 'direct') {
-			this.sendSocket.send(buf, this.config.commandPort, this.config.host)
-		} else {
-			this.sendSocket.send(buf, this.config.broadcastPort, this.config.broadcastAddress || '255.255.255.255')
-		}
+		this.sendSocket.send(buf, this.connection.commandPort, this.connection.host)
 	}
 
 	disconnect(): void {

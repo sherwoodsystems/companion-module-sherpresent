@@ -5,7 +5,7 @@ import { UpgradeScripts } from './upgrades.js'
 import { UpdateActions } from './actions.js'
 import { UpdateFeedbacks } from './feedbacks.js'
 import { UpdatePresets } from './presets.js'
-import { OscTransport } from './osc.js'
+import { OscTransport, type OscConnectionInfo } from './osc.js'
 import type osc from 'osc'
 
 export class ModuleInstance extends InstanceBase<ModuleConfig> {
@@ -49,8 +49,23 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 		this.initTransport()
 	}
 
+	private getConnectionInfo(): OscConnectionInfo {
+		if (this.config.bonjourDevice) {
+			return {
+				host: this.config.bonjourDevice.host,
+				commandPort: this.config.bonjourDevice.port,
+				feedbackPort: this.config.feedbackPort,
+			}
+		}
+		return {
+			host: this.config.host,
+			commandPort: this.config.commandPort,
+			feedbackPort: this.config.feedbackPort,
+		}
+	}
+
 	private initTransport(): void {
-		this.transport = new OscTransport(this.config, (address, args) => {
+		this.transport = new OscTransport(this.getConnectionInfo(), (address, args) => {
 			this.handleFeedback(address, args)
 		})
 
@@ -115,15 +130,6 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 				this.zoomLevel = val
 				changed = true
 			}
-		} else if (address.endsWith('/state/slide')) {
-			// Broadcast combined format: current, total
-			const current = getInt(0)
-			const total = getInt(1)
-			if (this.currentSlide !== current || this.totalSlides !== total) {
-				this.currentSlide = current
-				this.totalSlides = total
-				changed = true
-			}
 		}
 
 		if (changed) {
@@ -141,9 +147,6 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 	}
 
 	buildAddress(command: string): string {
-		if (this.config.mode === 'broadcast') {
-			return `/clicker/${this.config.channel}/${command}`
-		}
 		return `/clicker/${command}`
 	}
 

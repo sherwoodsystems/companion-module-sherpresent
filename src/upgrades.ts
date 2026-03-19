@@ -35,4 +35,37 @@ export const UpgradeScripts: CompanionStaticUpgradeScript<ModuleConfig>[] = [
 			updatedFeedbacks: [],
 		}
 	},
+
+	function migrateToV2(
+		_context: CompanionUpgradeContext<ModuleConfig>,
+		props: CompanionStaticUpgradeProps<ModuleConfig>,
+	): CompanionStaticUpgradeResult<ModuleConfig> {
+		const config = props.config as unknown as Record<string, unknown> | null
+		if (!config) {
+			return { updatedConfig: null, updatedActions: [], updatedFeedbacks: [] }
+		}
+
+		let configChanged = false
+
+		// Migrate from broadcast/direct mode to bonjour discovery
+		if ('mode' in config || 'broadcastPort' in config || 'channel' in config) {
+			config.bonjourDevice = null
+
+			if (!('host' in config)) config.host = '127.0.0.1'
+			if (!('commandPort' in config)) config.commandPort = 9000
+			if (!('feedbackPort' in config)) config.feedbackPort = 9001
+
+			delete config.mode
+			delete config.broadcastPort
+			delete config.broadcastAddress
+			delete config.channel
+			configChanged = true
+		}
+
+		return {
+			updatedConfig: configChanged ? (config as unknown as ModuleConfig) : null,
+			updatedActions: [],
+			updatedFeedbacks: [],
+		}
+	},
 ]
