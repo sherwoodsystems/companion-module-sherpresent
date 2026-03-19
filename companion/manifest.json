@@ -1,6 +1,6 @@
 {
 	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
-	"id": "sherwoodsystems-sherpresent",
+	"id": "companion-module-sherpresent",
 	"name": "SherPresent",
 	"shortname": "sherpresent",
 	"description": "Network based multi-platform presentation remote to integrate with the Sherwood Systems clicker adapter.",
