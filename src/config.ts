@@ -6,6 +6,7 @@ export interface ModuleConfig {
 	commandPort: number
 	feedbackPort: number
 	broadcastPort: number
+	broadcastAddress: string
 	channel: string
 }
 
@@ -65,6 +66,15 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			min: 1,
 			max: 65535,
 			default: 9002,
+			isVisible: (config) => config.mode === 'broadcast',
+		},
+		{
+			type: 'textinput',
+			id: 'broadcastAddress',
+			label: 'Broadcast Address',
+			width: 4,
+			regex: Regex.IP,
+			default: '255.255.255.255',
 			isVisible: (config) => config.mode === 'broadcast',
 		},
 		{

@@ -89,7 +89,7 @@ export class OscTransport {
 		if (this.config.mode === 'direct') {
 			this.sendSocket.send(buf, this.config.commandPort, this.config.host)
 		} else {
-			this.sendSocket.send(buf, this.config.broadcastPort, '255.255.255.255')
+			this.sendSocket.send(buf, this.config.broadcastPort, this.config.broadcastAddress || '255.255.255.255')
 		}
 	}
 
