@@ -22,6 +22,6 @@
 	},
 	"legacyIds": [],
 	"manufacturer": "Sherwood Systems",
-	"products": ["SherStage", "SherPresent", "SlideMerge"],
+	"products": ["SherPresent"],
 	"keywords": ["PowerPoint", "Keynote", "Canva", "Presentation", "Remote"]
 }
