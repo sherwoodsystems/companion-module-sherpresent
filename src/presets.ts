@@ -1,13 +1,23 @@
 import type { ModuleInstance } from './main.js'
 import { type CompanionPresetDefinitions, combineRgb } from '@companion-module/base'
 
+const white = combineRgb(255, 255, 255)
+const black = combineRgb(0, 0, 0)
+
+// Feedback colors (bright, used in active states)
+const greenActive = combineRgb(0, 204, 0)
+const blueActive = combineRgb(0, 102, 204)
+const yellowActive = combineRgb(255, 255, 0)
+
+// Base button colors (darker, used as default bg)
+const darkGreen = combineRgb(0, 120, 0)
+const darkRed = combineRgb(140, 0, 0)
+const darkBlue = combineRgb(0, 51, 102)
+const darkPurple = combineRgb(60, 0, 90)
+const darkGrey = combineRgb(40, 40, 40)
+
 export function UpdatePresets(self: ModuleInstance): void {
 	const presets: CompanionPresetDefinitions = {}
-
-	const white = combineRgb(255, 255, 255)
-	const black = combineRgb(0, 0, 0)
-	const green = combineRgb(0, 204, 0)
-	const blue = combineRgb(0, 102, 204)
 
 	presets['next_slide'] = {
 		type: 'button',
@@ -17,7 +27,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 			text: 'NEXT\\n$(sherpresent:current_slide)/$(sherpresent:total_slides)',
 			size: 'auto',
 			color: white,
-			bgcolor: black,
+			bgcolor: darkGreen,
 			show_topbar: false,
 		},
 		steps: [
@@ -30,7 +40,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 			{
 				feedbackId: 'presenting',
 				options: {},
-				style: { bgcolor: green },
+				style: { bgcolor: greenActive },
 			},
 		],
 	}
@@ -43,7 +53,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 			text: 'PREV\\n$(sherpresent:current_slide)/$(sherpresent:total_slides)',
 			size: 'auto',
 			color: white,
-			bgcolor: black,
+			bgcolor: darkRed,
 			show_topbar: false,
 		},
 		steps: [
@@ -56,7 +66,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 			{
 				feedbackId: 'presenting',
 				options: {},
-				style: { bgcolor: green },
+				style: { bgcolor: greenActive },
 			},
 		],
 	}
@@ -69,7 +79,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 			text: 'GOTO 1',
 			size: 'auto',
 			color: white,
-			bgcolor: black,
+			bgcolor: darkBlue,
 			show_topbar: false,
 		},
 		steps: [
@@ -82,7 +92,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 			{
 				feedbackId: 'slide_match',
 				options: { slide: 1 },
-				style: { bgcolor: combineRgb(255, 255, 0), color: black },
+				style: { bgcolor: yellowActive, color: black },
 			},
 		],
 	}
@@ -95,7 +105,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 			text: '$(sherpresent:current_slide)/$(sherpresent:total_slides)',
 			size: 'auto',
 			color: white,
-			bgcolor: black,
+			bgcolor: darkGrey,
 			show_topbar: false,
 		},
 		steps: [],
@@ -103,7 +113,28 @@ export function UpdatePresets(self: ModuleInstance): void {
 			{
 				feedbackId: 'presenting',
 				options: {},
-				style: { bgcolor: green },
+				style: { bgcolor: greenActive },
+			},
+		],
+	}
+
+	presets['presenting'] = {
+		type: 'button',
+		category: 'Info',
+		name: 'Presenting',
+		style: {
+			text: 'PRESENTING',
+			size: 'auto',
+			color: white,
+			bgcolor: darkGrey,
+			show_topbar: false,
+		},
+		steps: [],
+		feedbacks: [
+			{
+				feedbackId: 'presenting',
+				options: {},
+				style: { bgcolor: greenActive },
 			},
 		],
 	}
@@ -116,7 +147,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 			text: 'ZOOM+\\n$(sherpresent:zoom_level)%',
 			size: 'auto',
 			color: white,
-			bgcolor: black,
+			bgcolor: darkPurple,
 			show_topbar: false,
 		},
 		steps: [
@@ -129,7 +160,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 			{
 				feedbackId: 'is_open',
 				options: {},
-				style: { bgcolor: blue },
+				style: { bgcolor: blueActive },
 			},
 		],
 	}
@@ -142,7 +173,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 			text: 'ZOOM-\\n$(sherpresent:zoom_level)%',
 			size: 'auto',
 			color: white,
-			bgcolor: black,
+			bgcolor: darkPurple,
 			show_topbar: false,
 		},
 		steps: [
@@ -155,7 +186,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 			{
 				feedbackId: 'is_open',
 				options: {},
-				style: { bgcolor: blue },
+				style: { bgcolor: blueActive },
 			},
 		],
 	}
